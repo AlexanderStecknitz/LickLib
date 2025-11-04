@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// useless!!
+// TODO: Safe delete
 func Open(dsn string) *gorm.DB {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

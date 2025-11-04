@@ -34,4 +34,7 @@ func (d Difficulty) Value() (driver.Value, error) {
 	return string(d), nil
 }
 
+// what is this exactly?
+// not even used apparently
+// TODO: check this one out
 func PtrDifficulty(v Difficulty) *Difficulty { return &v }
