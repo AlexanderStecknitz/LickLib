@@ -2,7 +2,6 @@ package de.licklib.kotlinbackend.service
 
 import de.licklib.kotlinbackend.model.File
 import de.licklib.kotlinbackend.properties.BucketProperties
-import io.minio.MinioClient
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,11 +10,13 @@ class FileService(
     private val bucketProperties: BucketProperties
 ) {
 
-    fun uploadFile(file: File) {
-        bucketService.uploadFile(
+    fun uploadFile(file: File): File {
+        val uploadedFile = bucketService.uploadFile(
             file = file,
-            bucketName = bucketProperties.bucket
+            bucketName = bucketProperties.name
         )
+
+        return uploadedFile
     }
 
 }

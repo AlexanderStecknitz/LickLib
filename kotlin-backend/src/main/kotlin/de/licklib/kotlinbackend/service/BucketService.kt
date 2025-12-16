@@ -11,7 +11,7 @@ class BucketService(
     private val minioClient: MinioClient
 ) {
 
-    fun uploadFile(file: File, bucketName: String) {
+    fun uploadFile(file: File, bucketName: String): File {
         minioClient.putObject(
             PutObjectArgs.builder()
                 .bucket(bucketName)
@@ -19,7 +19,8 @@ class BucketService(
                 .stream(file.inputStream, file.size, -1)
                 .contentType(file.contentType)
                 .build()
-        );
+        )
+        return file
     }
 
 }

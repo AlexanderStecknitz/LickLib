@@ -7,5 +7,5 @@ data class BucketProperties(
     val endpoint: String,
     val accessKey: String,
     val secretKey: String,
-    val bucket: String
+    val name: String
 )

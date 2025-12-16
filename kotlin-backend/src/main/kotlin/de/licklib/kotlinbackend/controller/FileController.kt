@@ -1,5 +1,8 @@
 package de.licklib.kotlinbackend.controller
 
+import de.licklib.kotlinbackend.controller.dto.UploadFileResponseDTO
+import de.licklib.kotlinbackend.model.File
+import de.licklib.kotlinbackend.service.FileService
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
 import io.minio.UploadObjectArgs
@@ -15,26 +18,37 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/file")
-class FileController {
+class FileController(
+    private val fileService: FileService
+) {
 
     @PostMapping("/upload")
-    fun uploadFile(@RequestParam("file") file: MultipartFile): ResponseEntity<String> {
-        val minioClient = MinioClient.builder()
-            .endpoint("http://localhost:9000")
-            .credentials("minio_admin_user", "supersecretpassword123")
-            .build()
+    fun uploadFile(@RequestParam("file") file: MultipartFile): ResponseEntity<UploadFileResponseDTO> {
 
-        minioClient.putObject(
-            PutObjectArgs.builder()
-                .bucket("test")
-                .`object`(file.originalFilename)
-                .stream(file.inputStream, file.size, -1)
-                .contentType(file.contentType)
-                .build()
-        );
+        if(file.originalFilename == null || file.contentType == null) {
+            return ResponseEntity.badRequest().build()
+        }
 
-        log.info("upload file: ${file.originalFilename}")
-        return ResponseEntity.ok().body(file.originalFilename)
+        val originalName = file.originalFilename as String
+        val contentType = file.contentType as String
+
+        val file = File(
+            name = originalName,
+            size = file.size,
+            contentType = contentType,
+            duration = 1,
+            inputStream = file.inputStream
+        )
+
+        val uploadedFile = fileService.uploadFile(file = file)
+
+        log.info("upload file: ${uploadedFile.name}")
+
+        val uploadFileResponseDTO = UploadFileResponseDTO(
+            file = uploadedFile
+        )
+
+        return ResponseEntity.ok().body(uploadFileResponseDTO)
     }
 
     companion object {
